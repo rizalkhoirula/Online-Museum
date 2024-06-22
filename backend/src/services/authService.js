@@ -28,12 +28,17 @@ const sendToken = (user, statusCode, res) => {
 };
 
 const Register = asyncHandler(async (req, res) => {
+  const isFirstAccount = (await User.countDocuments()) === 0;
+
+  const role = isFirstAccount ? "admin" : "user";
+
   const { username, email, password } = req.body;
 
   const createUser = await User.create({
     username,
     email,
     password,
+    role,
   });
 
   // JWT Process
@@ -48,21 +53,43 @@ const Login = asyncHandler(async (req, res) => {
   const userData = await User.findOne({
     email: req.body.email,
   });
-  if (userData && (await userData. comparePassword(req.body.password))) {
-    sendToken(userData)
+  if (userData && (await userData.comparePassword(req.body.password))) {
+    sendToken(userData, 200, res);
   } else {
     res.status(400);
-    throw new Error("Invalid userx");
+    throw new Error("Invalid user");
   }
 });
 
 const Logout = (req, res) => {
-  res.send("Logout Berhasil");
+  res.cookie("jwt", "", {
+    expires: new Date(0),
+    httpOnly: true,
+    secure: false,
+  });
+  return res.status(200).json({
+    message: "Logout Berhasil",
+  });
 };
 
 const Getuser = async (req, res) => {
-  const users = await User.find();
-  res.json(users);
+  try {
+    const user = await User.findById(req.user.id).select({ password: 0 });
+
+    if (user) {
+      return res.status(200).json({
+        user,
+      });
+    }
+
+    return res.status(404).json({
+      message: "User tidak ditemukan",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Terjadi kesalahan pada server",
+    });
+  }
 };
 
 module.exports = { Login, Register, Logout, Getuser };
