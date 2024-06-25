@@ -2,6 +2,7 @@
 import { useLayout } from '@/layout/composables/layout';
 import { ref } from 'vue';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import { useRouter } from 'vue-router';
 
 const { layoutConfig } = useLayout();
@@ -19,8 +20,15 @@ const login = async () => {
             password: password.value
         });
 
+        console.log('Login response:', response); // Log the entire response for debugging
+
         if (response.status === 200) {
-            console.log('Login successful:', response.data.message);
+            const token = response.data.token;
+            console.log('Token received:', token); // Log the token for debugging
+
+            // Save token in cookie
+            Cookies.set('jwt', token, { expires: 7, path: '/' });
+
             alert('Login successful!');
             router.push('/dashboard');
         } else {
@@ -28,7 +36,7 @@ const login = async () => {
             alert('Login failed!');
         }
     } catch (error) {
-        console.error('Error:', error.response.data.message);
+        console.error('Error:', error); // Log the entire error object for debugging
         alert('Error occurred while logging in!');
     }
 };

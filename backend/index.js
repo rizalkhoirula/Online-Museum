@@ -9,6 +9,7 @@ const morgan = require("morgan");
 
 // Import routes and middleware
 const authRoutes = require("./src/routes/authRoutes");
+const BarangRoutes = require("./src/routes/barangRoutes");
 const { notFound, errorHandler } = require("./src/middleware/ErrorHandler");
 
 // Initialize Express application
@@ -28,6 +29,8 @@ if (process.env.NODE_ENV === "development") {
 
 // Routes setup
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/barang", BarangRoutes);
+
 
 // MongoDB connection setup (if needed)
 async function connectToDatabase() {

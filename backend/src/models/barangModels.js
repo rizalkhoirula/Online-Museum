@@ -4,7 +4,7 @@ const BarangSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "username harus diisi"],
+      required: [true, "name harus diisi"],
     },
     image: {
       type: String,
@@ -12,7 +12,7 @@ const BarangSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: [true, "image harus diisi"],
+      required: [true, "description harus diisi"],
     },
   },
   {

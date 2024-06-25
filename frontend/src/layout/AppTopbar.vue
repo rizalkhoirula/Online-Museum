@@ -2,6 +2,8 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useLayout } from '@/layout/composables/layout';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const { layoutConfig, onMenuToggle } = useLayout();
 
@@ -28,6 +30,21 @@ const onSettingsClick = () => {
     topbarMenuActive.value = false;
     router.push('/documentation');
 };
+const logout = async () => {
+    try {
+        const response = await axios.get('http://localhost:8080/api/v1/auth/logout');
+        console.log('Logout successful:', response.data.message);
+
+        // Remove JWT cookie
+        Cookies.remove('jwt', { path: '/' });
+
+        // Redirect to login page
+        router.push('/auth/login');
+    } catch (error) {
+        console.error('Logout failed:', error);
+    }
+};
+
 const topbarMenuClasses = computed(() => {
     return {
         'layout-topbar-menu-mobile-active': topbarMenuActive.value
@@ -46,7 +63,7 @@ const bindOutsideClickListener = () => {
 };
 const unbindOutsideClickListener = () => {
     if (outsideClickListener.value) {
-        document.removeEventListener('click', outsideClickListener);
+        document.removeEventListener('click', outsideClickListener.value);
         outsideClickListener.value = null;
     }
 };
@@ -76,17 +93,13 @@ const isOutsideClicked = (event) => {
         </button>
 
         <div class="layout-topbar-menu" :class="topbarMenuClasses">
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-                <i class="pi pi-calendar"></i>
-                <span>Calendar</span>
-            </button>
-            <button @click="onTopBarMenuButton()" class="p-link layout-topbar-button">
-                <i class="pi pi-user"></i>
-                <span>Profile</span>
-            </button>
             <button @click="onSettingsClick()" class="p-link layout-topbar-button">
                 <i class="pi pi-cog"></i>
                 <span>Settings</span>
+            </button>
+            <button @click="logout()" class="p-link layout-topbar-button">
+                <i class="pi pi-sign-out"></i>
+                <span>Logout</span>
             </button>
         </div>
     </div>
