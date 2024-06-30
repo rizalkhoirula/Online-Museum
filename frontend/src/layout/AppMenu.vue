@@ -1,12 +1,8 @@
 <script setup>
 import { ref } from 'vue';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { useRouter } from 'vue-router';
 
 import AppMenuItem from './AppMenuItem.vue';
 
-const router = useRouter();
 
 const model = ref([
     {
@@ -19,12 +15,12 @@ const model = ref([
             {
                 label: 'User Table',
                 icon: 'pi pi-fw pi-table',
-                to: '/uikit/table'
+                to: '/dashboard/user'
             },
             {
                 label: 'Product Table',
                 icon: 'pi pi-fw pi-pencil',
-                to: '/pages/crud'
+                to: '/dashboard/crud'
             }
         ]
     },

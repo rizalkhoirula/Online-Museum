@@ -21,10 +21,9 @@ router.get("/user", Getalluser);
 router.get("/getuser", AuthMiddleware, Getuser);
 router.get("/test", AuthMiddleware, permisionUser("admin"), (req, res) => {
   res.status(200).json({
-    message: "Berhasil",
+    message: "success",
   });
 });
 router.get("/count", Countuser);
-
 
 module.exports = router;

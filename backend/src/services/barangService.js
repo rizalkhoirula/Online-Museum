@@ -6,18 +6,15 @@ const AddBarang = async (req, res) => {
   try {
     const { name, description } = req.body;
     const image = req.file;
-
     if (!name || !image || !description) {
       return res.status(400).send("Semua field harus diisi");
     }
-
     const newBarang = await barang.create({
       name,
       image: image.filename,
       description,
     });
     await newBarang.save();
-
     res.status(201).send(newBarang);
   } catch (error) {
     console.error(error);
@@ -29,14 +26,11 @@ const Editbarang = async (req, res) => {
   const { id } = req.params;
   const { name, description } = req.body;
   const image = req.file;
-
   try {
     const editBarang = await barang.findById(id);
-
     if (!editBarang) {
       return res.status(404).send("Barang not found");
     }
-
     if (image) {
       const imagePath = path.join(
         __dirname,
@@ -48,12 +42,9 @@ const Editbarang = async (req, res) => {
       await fs.unlink(imagePath);
       editBarang.image = image.filename;
     }
-
     editBarang.name = name;
     editBarang.description = description;
-
     await editBarang.save();
-
     res.status(200).json(editBarang);
   } catch (error) {
     console.error(error);
@@ -65,11 +56,9 @@ const Hapusbarang = async (req, res) => {
   const { id } = req.params;
   try {
     const deletedBarang = await barang.findById(id);
-
     if (!deletedBarang) {
       return res.status(404).json({ error: "Barang not found" });
     }
-
     const imagePath = path.join(
       __dirname,
       "..",
@@ -78,9 +67,7 @@ const Hapusbarang = async (req, res) => {
       deletedBarang.image
     );
     await fs.unlink(imagePath);
-
     await barang.findByIdAndDelete(id);
-
     res
       .status(200)
       .json({ message: `Barang with ID ${id} deleted successfully.` });
@@ -92,10 +79,8 @@ const Hapusbarang = async (req, res) => {
 
 const Getbarangbyid = async (req, res) => {
   const { id } = req.params;
-
   try {
     const barangId = await barang.findById(id);
-
     return res.status(200).json(barangId);
   } catch (error) {
     console.error("Error:", error);
@@ -107,7 +92,6 @@ const Getbarangbyid = async (req, res) => {
 const Getallbarang = async (req, res) => {
   try {
     const allBarang = await barang.find();
-
     res.status(200).json(allBarang);
   } catch (error) {
     console.error(error);
@@ -119,14 +103,11 @@ const Getimagebyid = async (req, res) => {
   try {
     const id = req.params.barang_id;
     const barangData = await barang.findById(id);
-
     if (!barangData) {
       return res.status(404).send("Data barang tidak ditemukan");
     }
-
     const imageName = barangData.image;
     const imagePath = path.join(__dirname, "..", "assets", "image", imageName);
-
     console.log("Requested image path:", imagePath);
     res.sendFile(imagePath);
   } catch (error) {
@@ -137,7 +118,6 @@ const Getimagebyid = async (req, res) => {
 const Countbarang = async (req, res) => {
   try {
     const barangCount = await barang.countDocuments();
-
     res.status(200).json({ count: barangCount });
   } catch (error) {
     console.error(error);
